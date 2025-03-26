@@ -4,6 +4,7 @@ import { AppDataSource } from 'src/db/config/database.config'
 import TypeORMAdapter from 'typeorm-adapter'
 import { PinoLogger } from 'nestjs-pino'
 import { CasbinRuleCreateDto } from '../dtos/casbin_rule.create.dto'
+import { QueryParamsDto } from 'src/core/dto/query_params.dto'
 
 @Injectable()
 export class CasbinService implements OnModuleInit {
@@ -32,7 +33,8 @@ export class CasbinService implements OnModuleInit {
     )
   }
 
-  async getPolicies(page: number, size: number, filter?: string) {
+  async getPolicies(queryParams: QueryParamsDto) {
+    const { page, size, filter } = queryParams
     const policies = await this.enforcer.getPolicy()
     const filteredPolicies = (
       filter

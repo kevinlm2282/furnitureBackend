@@ -71,6 +71,11 @@ export class AuthService extends BaseService {
     if (!isPasswordMatch) {
       throw new UnauthorizedException('Password not match')
     }
-    return { accessToken: this.JWTService.sign({ id: user.id }) }
+    return {
+      accessToken: this.JWTService.sign({
+        id: user.id,
+        role: user.roles[0].name,
+      }),
+    }
   }
 }

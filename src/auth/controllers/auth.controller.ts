@@ -19,8 +19,8 @@ import { PinoLogger } from 'nestjs-pino'
 import { Request as req } from 'express'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { CasbinService } from '../services/casbin.service'
-import { RoleService } from '../services/role.service'
 import { CasbinRuleCreateDto } from '../dtos/casbin_rule.create.dto'
+import { QueryParamsDto } from 'src/core/dto/query_params.dto'
 
 @Controller('auth')
 export class AuthController extends BaseService {
@@ -28,12 +28,12 @@ export class AuthController extends BaseService {
     logger: PinoLogger,
     private authService: AuthService,
     private casbinService: CasbinService,
-    private roleService: RoleService,
   ) {
     super(logger)
   }
 
   @Post('register')
+  @UseGuards(AuthGuard, CasbinGuard)
   async createUser(@Body() userDto: UserCreateDto) {
     return await this.authService.createUser(userDto)
   }
@@ -52,14 +52,8 @@ export class AuthController extends BaseService {
 
   @Get('policy')
   @UseGuards(AuthGuard, CasbinGuard)
-  async getPolicies(
-    @Query('filter') filter?: string,
-    @Query('page') page?: number,
-    @Query('size') size?: number,
-  ) {
-    page = page ? page : 1
-    size = size ? size : 10
-    return await this.casbinService.getPolicies(page, size, filter)
+  async getPolicies(@Query() queryParams: QueryParamsDto) {
+    return await this.casbinService.getPolicies(queryParams)
   }
 
   @Post('policy')
