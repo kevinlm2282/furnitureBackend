@@ -7,6 +7,8 @@ import { User } from './entities/user.entity'
 import { Role } from './entities/role.entity'
 import { jwtConstants } from './constants/auth.constants'
 import { JwtModule } from '@nestjs/jwt'
+import { CasbinService } from './services/casbin.service'
+import { RoleService } from './services/role.service'
 
 @Module({
   imports: [
@@ -18,6 +20,6 @@ import { JwtModule } from '@nestjs/jwt'
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserRepository],
+  providers: [AuthService, UserRepository, CasbinService, RoleService],
 })
 export class AuthModule {}

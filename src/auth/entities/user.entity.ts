@@ -13,14 +13,22 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    length: 200,
+  })
   password: string
 
-  @Column()
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    length: 50,
+  })
   username: string
 
-  @ManyToMany(() => Role)
-  @JoinTable()
+  @ManyToMany(() => Role, { eager: true })
+  @JoinTable({ name: 'user_roles' })
   roles: Role[]
 
   constructor(partial: Partial<User>) {

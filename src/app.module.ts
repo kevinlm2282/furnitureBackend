@@ -4,7 +4,7 @@ import { AppService } from './app.service'
 import { LoggerModule } from 'nestjs-pino'
 import { Request, Response } from 'express'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { AppDataSource } from './config/database.config'
+import { AppDataSource } from './db/config/database.config'
 import { AuthModule } from './auth/auth.module'
 
 @Module({

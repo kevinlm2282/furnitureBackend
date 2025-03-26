@@ -6,6 +6,16 @@ export class Role extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    length: 100,
+  })
   name: string
+
+  constructor(partial: Partial<Role>) {
+    super()
+
+    Object.assign(this, partial)
+  }
 }

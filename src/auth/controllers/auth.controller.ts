@@ -1,16 +1,34 @@
-import { Body, Controller, Get, Post, UseGuards, Request } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Request,
+  Query,
+  Put,
+  Delete,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { AuthService } from '../services/auth.service'
 import { UserCreateDto } from '../dtos/user.create.dto'
 import { AuthGuard } from '../guards/auth.guard'
 import { BaseService } from 'src/core/service/base.service'
 import { PinoLogger } from 'nestjs-pino'
 import { Request as req } from 'express'
+import { CasbinGuard } from '../guards/casbin.guard'
+import { CasbinService } from '../services/casbin.service'
+import { RoleService } from '../services/role.service'
+import { CasbinRuleCreateDto } from '../dtos/casbin_rule.create.dto'
 
 @Controller('auth')
 export class AuthController extends BaseService {
   constructor(
     logger: PinoLogger,
     private authService: AuthService,
+    private casbinService: CasbinService,
+    private roleService: RoleService,
   ) {
     super(logger)
   }
@@ -26,9 +44,50 @@ export class AuthController extends BaseService {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, CasbinGuard)
   async findUserByUsername(@Request() req: req) {
     this.logger.info(`findUserByUsername ${JSON.stringify(req['user'])}`)
     return await this.authService.findUserByUsername('ariel')
+  }
+
+  @Get('policy')
+  @UseGuards(AuthGuard, CasbinGuard)
+  async getPolicies(
+    @Query('filter') filter?: string,
+    @Query('page') page?: number,
+    @Query('size') size?: number,
+  ) {
+    page = page ? page : 1
+    size = size ? size : 10
+    return await this.casbinService.getPolicies(page, size, filter)
+  }
+
+  @Post('policy')
+  @UseGuards(AuthGuard, CasbinGuard)
+  async addPolicy(@Body() casbinRule: CasbinRuleCreateDto) {
+    const isAdded = await this.casbinService.addPolicy(casbinRule)
+    if (!isAdded) {
+      throw new BadRequestException('Policy not added')
+    }
+    return { message: 'Policy added' }
+  }
+
+  @Put('policy')
+  @UseGuards(AuthGuard, CasbinGuard)
+  async updatePolicy(
+    @Query() oldRule: CasbinRuleCreateDto,
+    @Body() newRule: CasbinRuleCreateDto,
+  ) {
+    const isUpdated = await this.casbinService.updatePolicy(oldRule, newRule)
+    if (!isUpdated) {
+      throw new NotFoundException('Policy not found')
+    }
+    return { message: 'Policy updated' }
+  }
+
+  @Delete('policy')
+  @UseGuards(AuthGuard, CasbinGuard)
+  async removePolicy(@Query() casbinRule: CasbinRuleCreateDto) {
+    return await this.casbinService.removePolicy(casbinRule)
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { UserCreateDto } from '../dtos/user.create.dto'
 import { User } from '../entities/user.entity'
 import { UserRepository } from '../repositories/user.repository'
@@ -6,6 +10,7 @@ import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt'
 import { BaseService } from 'src/core/service/base.service'
 import { PinoLogger } from 'nestjs-pino'
+import { Role } from '../entities/role.entity'
 
 @Injectable()
 export class AuthService extends BaseService {
@@ -21,7 +26,16 @@ export class AuthService extends BaseService {
     console.log('userDto', userDto)
     const password = await bcrypt.hash(userDto.password, 10)
     userDto.password = password
-    const user = await this.userRepository.createUser(new User({ ...userDto }))
+    const roles: Role[] = userDto.roles.map((rol) => {
+      return new Role({ ...rol })
+    })
+    const user = await this.userRepository.createUser(
+      new User({
+        username: userDto.username,
+        password: userDto.password,
+        roles,
+      }),
+    )
     return user
   }
 
@@ -32,7 +46,7 @@ export class AuthService extends BaseService {
   async findUserById(id: number) {
     const user = await this.userRepository.findUserById(id)
     if (!user) {
-      throw new Error('User not found')
+      throw new NotFoundException('User not found')
     }
     return user
   }
@@ -51,11 +65,11 @@ export class AuthService extends BaseService {
   async login(username: string, password: string) {
     const user = await this.findUserByUsername(username)
     if (!user) {
-      throw new Error('User not found')
+      throw new UnauthorizedException('User not found')
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password)
     if (!isPasswordMatch) {
-      throw new Error('Password not match')
+      throw new UnauthorizedException('Password not match')
     }
     return { accessToken: this.JWTService.sign({ id: user.id }) }
   }
