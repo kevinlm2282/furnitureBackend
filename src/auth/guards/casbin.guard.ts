@@ -17,7 +17,7 @@ export class CasbinGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>()
-    const user = request['user'] as { id: number } | undefined
+    const user = request['user'] as { id: number; role: string } | undefined
     if (!user || typeof user.id !== 'number') {
       throw new UnauthorizedException('User not authenticated')
     }
@@ -26,16 +26,11 @@ export class CasbinGuard implements CanActivate {
       throw new UnauthorizedException('User not authenticated')
     }
     const { method, url } = request
-    const savedUser = await this.userService.findUserById(user.id)
-    if (!savedUser) {
-      throw new UnauthorizedException('User not authenticated')
-    }
-    this.logger.info(`savedUser ${JSON.stringify(savedUser)}`)
-    this.logger.info(
-      `method: ${method}, url: ${url}, user: ${savedUser.roles[0].name}`,
-    )
+
+    this.logger.info(`role ${JSON.stringify(user.role)}`)
+    this.logger.info(`method: ${method}, url: ${url}, user: ${user.role}`)
     const hasPermission = await this.casbinService.enforce(
-      savedUser.roles[0].name,
+      user.role,
       url.split('?')[0],
       method,
     )
