@@ -23,14 +23,14 @@ export class User1743062463329 implements MigrationInterface {
 
     let query: string = ''
     users.forEach((user, index) => {
-      query += `(${user.id},'${user.username}','${user.password}','${user.status}')`
+      query += `('${user.username}','${user.password}','${user.status}')`
       if (index < users.length - 1) {
         query += ', '
       }
     })
 
     await queryRunner.query(
-      `INSERT INTO USERS (id, username, password,status) VALUES ${query};`,
+      `INSERT INTO USERS ( username, password,status) VALUES ${query};`,
     )
   }
 

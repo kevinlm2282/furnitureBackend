@@ -21,6 +21,16 @@ export class CasbinRules1742922496047 implements MigrationInterface {
         object: '/auth/policy',
         action: 'GET|POST|PUT|DELETE',
       },
+      {
+        subject: 'ADMINISTRATOR',
+        object: '/roles',
+        action: 'GET|POST',
+      },
+      {
+        subject: 'ADMINISTRATOR',
+        object: '/roles/:id',
+        action: 'GET|POST',
+      },
     ]
 
     let query: string = ''

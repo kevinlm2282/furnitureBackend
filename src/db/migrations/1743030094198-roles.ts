@@ -5,7 +5,7 @@ export class Roles1743030094198 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `INSERT INTO roles (id,name, status) values (1,'ADMINISTRATOR',1 ),(2,'USER',1); `,
+      `INSERT INTO roles (name, status) values ('ADMINISTRATOR',1 ),('USER',1); `,
     )
   }
 
