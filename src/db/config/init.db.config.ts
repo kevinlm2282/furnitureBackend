@@ -9,6 +9,6 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'furniture',
   entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-  migrations: [path.join(__dirname, '../migrations/*{.ts,.js}')],
+  migrations: [path.join(__dirname, '../init/*{.ts,.js}')],
   schema: process.env.BD_SCHEMA || 'public',
 })

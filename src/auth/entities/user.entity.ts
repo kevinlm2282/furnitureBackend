@@ -28,7 +28,11 @@ export class User extends BaseEntity {
   username: string
 
   @ManyToMany(() => Role, { eager: true })
-  @JoinTable({ name: 'user_roles' })
+  @JoinTable({
+    name: 'user_roles',
+    joinColumns: [{ name: 'user_id' }],
+    inverseJoinColumns: [{ name: 'role_id' }],
+  })
   roles: Role[]
 
   constructor(partial: Partial<User>) {

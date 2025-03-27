@@ -47,7 +47,8 @@ export class AuthController extends BaseService {
   @UseGuards(AuthGuard, CasbinGuard)
   async findUserByUsername(@Request() req: req) {
     this.logger.info(`findUserByUsername ${JSON.stringify(req['user'])}`)
-    return await this.authService.findUserByUsername('ariel')
+    const user = req['user'] as { id: number }
+    return await this.authService.findUserById(user.id)
   }
 
   @Get('policy')
