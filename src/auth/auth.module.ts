@@ -9,6 +9,8 @@ import { jwtConstants } from './constants/auth.constants'
 import { JwtModule } from '@nestjs/jwt'
 import { CasbinService } from './services/casbin.service'
 import { RoleService } from './services/role.service'
+import { RoleController } from './controllers/roles.controller'
+import { RoleRepository } from './repositories/role.repository'
 
 @Module({
   imports: [
@@ -19,7 +21,13 @@ import { RoleService } from './services/role.service'
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, UserRepository, CasbinService, RoleService],
+  controllers: [AuthController, RoleController],
+  providers: [
+    AuthService,
+    UserRepository,
+    CasbinService,
+    RoleService,
+    RoleRepository,
+  ],
 })
 export class AuthModule {}

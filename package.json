@@ -22,7 +22,7 @@
     "migration:run": "npm run typeorm migration:run -- -d src/db/config/init.db.config.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d src/db/config/database.config.ts",
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "setup": "npm run schema:drop && npm run migration:generate src/db/init &&  npm run migration:run && npm run seed:run",
+    "setup": "npm run schema:drop && del /Q src\\db\\init\\*.ts && npm run migration:generate src/db/init/init &&  npm run migration:run && npm run seed:run",
     "schema:drop": "npm run typeorm -- schema:drop -d src/db/config/database.config.ts",
     "seed:run": "npm run typeorm migration:run -- -d src/db/config/database.config.ts"
   },

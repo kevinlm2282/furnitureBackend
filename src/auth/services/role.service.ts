@@ -2,8 +2,9 @@ import { RoleCreateDto } from '../dtos/rol.create.dto'
 import { RoleUpdateDto } from '../dtos/role.update.dto'
 import { Role } from '../entities/role.entity'
 import { RoleRepository } from '../repositories/role.repository'
-import { NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 
+@Injectable()
 export class RoleService {
   constructor(private readonly roleRepository: RoleRepository) {}
   async getRoleById(id: number) {

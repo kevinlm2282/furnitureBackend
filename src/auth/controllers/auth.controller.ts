@@ -10,6 +10,7 @@ import {
   Delete,
   NotFoundException,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common'
 import { AuthService } from '../services/auth.service'
 import { UserCreateDto } from '../dtos/user.create.dto'
@@ -34,6 +35,7 @@ export class AuthController extends BaseService {
 
   @Post('register')
   @UseGuards(AuthGuard, CasbinGuard)
+  @HttpCode(201)
   async createUser(@Body() userDto: UserCreateDto) {
     return await this.authService.createUser(userDto)
   }
@@ -46,9 +48,13 @@ export class AuthController extends BaseService {
   @Get()
   @UseGuards(AuthGuard, CasbinGuard)
   async findUserByUsername(@Request() req: req) {
-    this.logger.info(`findUserByUsername ${JSON.stringify(req['user'])}`)
     const user = req['user'] as { id: number }
-    return await this.authService.findUserById(user.id)
+    const userEntity = await this.authService.findUserById(user.id)
+    return {
+      username: userEntity.username,
+      id: userEntity.id,
+      role: userEntity.roles[0].name,
+    }
   }
 
   @Get('policy')
