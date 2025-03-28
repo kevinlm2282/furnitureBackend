@@ -12,7 +12,7 @@ export class QueryParamsDto {
   filter: string
   @IsOptional()
   @IsString()
-  order: string
+  order: 'ASC' | 'DESC' = 'DESC'
   @IsOptional()
   @IsString()
   sort: string

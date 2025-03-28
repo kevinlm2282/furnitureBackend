@@ -6,11 +6,14 @@ import { Request, Response } from 'express'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppDataSource } from './db/config/database.config'
 import { AuthModule } from './auth/auth.module'
+import { ItemsModule } from './items/items.module'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
     AuthModule,
     TypeOrmModule.forRoot(AppDataSource.options),
+    ConfigModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
         transport:
@@ -34,6 +37,7 @@ import { AuthModule } from './auth/auth.module'
         },
       },
     }),
+    ItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

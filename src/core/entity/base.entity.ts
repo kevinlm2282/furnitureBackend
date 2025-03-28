@@ -10,7 +10,5 @@ export abstract class BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date
 
-  constructor() {
-    this.status = 1
-  }
+  constructor() {}
 }
