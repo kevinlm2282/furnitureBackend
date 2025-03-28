@@ -53,15 +53,15 @@ export class Item extends BaseEntity {
   })
   user: string
 
-  @ManyToOne(() => Color)
+  @ManyToOne(() => Color, { eager: true })
   @JoinColumn({ name: 'id_color' })
   color: Color
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, { eager: true })
   @JoinColumn({ name: 'id_category' })
   category: Category
 
-  @ManyToOne(() => Image)
+  @ManyToOne(() => Image, { eager: true })
   @JoinColumn({ name: 'id_image' })
   image: Image
 

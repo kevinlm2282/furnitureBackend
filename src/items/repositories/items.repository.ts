@@ -3,16 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Item } from '../entities/item.entity'
 import { Brackets, Repository } from 'typeorm'
 import { QueryParamsDto } from 'src/core/dto/query_params.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @Injectable()
 export class ItemRepository {
   constructor(
     @InjectRepository(Item)
     private itemRepository: Repository<Item>,
+    private logger: PinoLogger,
   ) {}
 
   async createItem(item: Item) {
     await this.itemRepository.save(item)
+  }
+
+  async getItemById(id: number) {
+    return await this.itemRepository.findOne({ where: { id } })
   }
 
   async getItems(queryParams: QueryParamsDto): Promise<[any[], number]> {

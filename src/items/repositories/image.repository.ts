@@ -18,7 +18,11 @@ export class ImageRepository {
     return await this.imageRepository.findOne({ where: { uuid } })
   }
 
-  async deleteImage(id: string) {
+  async getImageById(id: number) {
+    return await this.imageRepository.findOne({ where: { id } })
+  }
+
+  async deleteImage(id: number) {
     return await this.imageRepository.delete(id)
   }
 }

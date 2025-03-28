@@ -3,23 +3,22 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   Query,
   Req,
   UseInterceptors,
   UploadedFile,
+  Put,
 } from '@nestjs/common'
 
 import { ItemsService } from '../service/items.service'
-// import { CreateItemDto } from '../dto/create-item.dto'
-// import { UpdateItemDto } from '../dto/update-item.dto'
 import { QueryParamsDto } from 'src/core/dto/query_params.dto'
 import { CreateItemDto } from '../dto/create-item.dto'
 import { Request } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { PinoLogger } from 'nestjs-pino'
+import { UpdateItemDto } from '../dto/update-item.dto'
 
 @Controller('items')
 export class ItemsController {
@@ -46,14 +45,20 @@ export class ItemsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.itemsService.findOne(+id)
+  findOne(@Param('id') id: number) {
+    return this.itemsService.getItemById(id)
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto) {
-  //   return this.itemsService.update(+id, updateItemDto)
-  // }
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() updateItemDto: UpdateItemDto,
+    @Param('id') id: number,
+    @Req() req: Request,
+  ) {
+    return await this.itemsService.updateItem(id, updateItemDto, 'ariel', image)
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

@@ -7,7 +7,7 @@ import { ImageRepository } from '../repositories/image.repository'
 import { randomUUID } from 'crypto'
 import * as fs from 'node:fs/promises'
 import { Image } from '../entities/image.entity'
-import * as path from 'node:path'
+import { join, resolve } from 'node:path'
 import { PinoLogger } from 'nestjs-pino'
 
 @Injectable()
@@ -18,8 +18,8 @@ export class ImageService {
   ) {}
 
   async createImage(file: Express.Multer.File) {
-    const joinedPath = path.join(
-      process.env.NFS_PATH || path.resolve(__dirname, '../../../uploads'),
+    const joinedPath = join(
+      process.env.NFS_PATH || resolve(__dirname, '../../../uploads'),
       `/images`,
     )
     const uuid = randomUUID()
@@ -36,9 +36,14 @@ export class ImageService {
       this.logger.info(`originalName ${file.originalname}`)
       return await this.imageRepository.createImage(image)
     } catch (error) {
-      await fs.unlink(`${joinedPath}/${uuid}`)
       this.logger.error(error)
-      throw new BadRequestException('Image error')
+      try {
+        await fs.unlink(`${joinedPath}/${uuid}`)
+        throw new BadRequestException('Image error')
+      } catch (error) {
+        this.logger.error(error)
+        throw new BadRequestException('Image error')
+      }
     }
   }
 
@@ -48,5 +53,27 @@ export class ImageService {
       throw new NotFoundException('Image not found')
     }
     return image
+  }
+
+  async getImageById(id: number) {
+    const image = await this.imageRepository.getImageById(id)
+    if (!image) {
+      throw new NotFoundException('Image not found')
+    }
+    return image
+  }
+
+  async deleteImage(id: number) {
+    const image = await this.getImageById(id)
+    try {
+      const path = join(
+        process.env.NFS_PATH || resolve(__dirname, '../../../uploads'),
+        `/images`,
+      )
+      await fs.unlink(`${path}/${image.uuid}`)
+    } catch {
+      this.logger.info(`image doesnt exists`)
+    }
+    return await this.imageRepository.deleteImage(id)
   }
 }
