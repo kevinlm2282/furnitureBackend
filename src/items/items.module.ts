@@ -14,9 +14,13 @@ import { ColorService } from './service/color.service'
 import { Color } from './entities/color.entity'
 import { Category } from './entities/category.entity'
 import { ImageController } from './controllers/image.controller'
+import { AuthModule } from 'src/auth/auth.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Item, Image, Color, Category])],
+  imports: [
+    TypeOrmModule.forFeature([Item, Image, Color, Category]),
+    AuthModule,
+  ],
   controllers: [ItemsController, ImageController],
   providers: [
     ItemsService,

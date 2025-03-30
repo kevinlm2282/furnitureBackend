@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  UseGuards,
 } from '@nestjs/common'
 
 import { ItemsService } from '../service/items.service'
@@ -19,8 +20,11 @@ import { Request } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { PinoLogger } from 'nestjs-pino'
 import { UpdateItemDto } from '../dto/update-item.dto'
+import { AuthGuard } from 'src/auth/guards/auth.guard'
+import { CasbinGuard } from 'src/auth/guards/casbin.guard'
 
 @Controller('items')
+@UseGuards(AuthGuard, CasbinGuard)
 export class ItemsController {
   constructor(
     private readonly itemsService: ItemsService,
@@ -34,9 +38,9 @@ export class ItemsController {
     @Req() req: Request,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    // const user = req['user'] as { username: string; id: number; role: string }
+    const user = req['user'] as { username: string; id: number; role: string }
     const item: CreateItemDto = { ...body }
-    return await this.itemsService.create(item, 'ariel', image)
+    return await this.itemsService.create(item, user.username, image)
   }
 
   @Get()
@@ -57,7 +61,13 @@ export class ItemsController {
     @Param('id') id: number,
     @Req() req: Request,
   ) {
-    return await this.itemsService.updateItem(id, updateItemDto, 'ariel', image)
+    const user = req['user'] as { id: number; role: string; username: string }
+    return await this.itemsService.updateItem(
+      id,
+      updateItemDto,
+      user.username,
+      image,
+    )
   }
 
   @Delete(':id')
