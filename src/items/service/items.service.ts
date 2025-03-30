@@ -98,7 +98,8 @@ export class ItemsService {
       }
     }
   }
-  remove(id: number) {
-    return `This action removes a #${id} item`
+  async deleteItem(id: number) {
+    await this.getItemById(id)
+    return await this.itemRepository.deleteItem(id)
   }
 }
