@@ -5,14 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { CasbinService } from '../services/casbin.service'
-import { AuthService } from '../services/auth.service'
 import { PinoLogger } from 'nestjs-pino'
 
 @Injectable()
 export class CasbinGuard implements CanActivate {
   constructor(
     private readonly casbinService: CasbinService,
-    private readonly userService: AuthService,
     private readonly logger: PinoLogger,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {

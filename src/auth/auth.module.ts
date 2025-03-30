@@ -11,6 +11,8 @@ import { CasbinService } from './services/casbin.service'
 import { RoleService } from './services/role.service'
 import { RoleController } from './controllers/roles.controller'
 import { RoleRepository } from './repositories/role.repository'
+import { AuthGuard } from './guards/auth.guard'
+import { CasbinGuard } from './guards/casbin.guard'
 
 @Module({
   imports: [
@@ -28,6 +30,9 @@ import { RoleRepository } from './repositories/role.repository'
     CasbinService,
     RoleService,
     RoleRepository,
+    AuthGuard,
+    CasbinGuard,
   ],
+  exports: [AuthGuard, CasbinGuard, CasbinService],
 })
 export class AuthModule {}

@@ -1,15 +1,14 @@
-import { Injectable, OnModuleInit } from '@nestjs/common'
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common'
 import { Enforcer, newEnforcer } from 'casbin'
 import { AppDataSource } from 'src/db/config/database.config'
 import TypeORMAdapter from 'typeorm-adapter'
-import { PinoLogger } from 'nestjs-pino'
 import { CasbinRuleCreateDto } from '../dtos/casbin_rule.create.dto'
 import { QueryParamsDto } from 'src/core/dto/query_params.dto'
 
 @Injectable()
 export class CasbinService implements OnModuleInit {
   private enforcer: Enforcer
-  constructor(private logger: PinoLogger) {}
+  constructor() {}
 
   async onModuleInit() {
     await this.initEnforcer()
@@ -58,11 +57,15 @@ export class CasbinService implements OnModuleInit {
   }
 
   async removePolicy(casbinRule: CasbinRuleCreateDto) {
-    return await this.enforcer.removePolicy(
+    const res = await this.enforcer.removePolicy(
       casbinRule.subject,
       casbinRule.object,
       casbinRule.action,
     )
+    if (!res) {
+      throw new NotFoundException('Policy not found')
+    }
+    return { message: 'Policy deleted' }
   }
 
   async updatePolicy(

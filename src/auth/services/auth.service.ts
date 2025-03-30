@@ -75,6 +75,7 @@ export class AuthService extends BaseService {
       accessToken: this.JWTService.sign({
         id: user.id,
         role: user.roles[0].name,
+        username: user.username,
       }),
     }
   }
