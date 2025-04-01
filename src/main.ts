@@ -3,6 +3,7 @@ import { AppModule } from './app.module'
 import { Logger } from 'nestjs-pino'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
+import { ResponseInterceptor } from './core/interceptors/response.interceptor'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true })
   app.useLogger(app.get(Logger))
@@ -13,6 +14,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   )
+
+  app.useGlobalInterceptors(new ResponseInterceptor())
 
   const config = new DocumentBuilder()
     .setTitle('Furnituer App')
