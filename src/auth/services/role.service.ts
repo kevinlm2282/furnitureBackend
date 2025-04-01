@@ -1,5 +1,4 @@
-import { RoleCreateDto } from '../dtos/rol.create.dto'
-import { RoleUpdateDto } from '../dtos/role.update.dto'
+import { CreateRoleDto } from '../dtos/rol.create.dto'
 import { Role } from '../entities/role.entity'
 import { RoleRepository } from '../repositories/role.repository'
 import { Injectable, NotFoundException } from '@nestjs/common'
@@ -15,7 +14,7 @@ export class RoleService {
     return user
   }
 
-  async createRole(roleDto: RoleCreateDto) {
+  async createRole(roleDto: CreateRoleDto) {
     const role = new Role({ ...roleDto })
     return await this.roleRepository.createRole(role)
   }
@@ -24,8 +23,8 @@ export class RoleService {
     return await this.roleRepository.getRoles()
   }
 
-  async updateRole(id: number, role: RoleUpdateDto) {
+  async updateRole(id: number, role: CreateRoleDto) {
     await this.getRoleById(id)
-    return await this.roleRepository.updateRole(role)
+    return await this.roleRepository.updateRole(id, role)
   }
 }

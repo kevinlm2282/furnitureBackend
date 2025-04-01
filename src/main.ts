@@ -15,8 +15,8 @@ async function bootstrap() {
   )
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Furnituer App')
+    .setDescription('The furniture API description')
     .setVersion('1.0')
     .build()
 
