@@ -29,7 +29,17 @@ export class CasbinRules1742922496047 implements MigrationInterface {
       {
         subject: 'ADMINISTRATOR',
         object: '/roles/:id',
-        action: 'GET|POST',
+        action: 'GET|PUT|DELETE',
+      },
+      {
+        subject: 'ADMINISTRATOR',
+        object: '/items/:id',
+        action: 'GET|PUT|DELETE',
+      },
+      {
+        subject: 'ADMINISTRATOR',
+        object: '/items',
+        action: 'GET|PUT|DELETE',
       },
     ]
 

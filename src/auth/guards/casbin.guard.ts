@@ -24,12 +24,14 @@ export class CasbinGuard implements CanActivate {
       throw new UnauthorizedException('User not authenticated')
     }
     const { method, url } = request
-
+    const splittedUrl = url.split('?')[0]
     this.logger.info(`role ${JSON.stringify(user.role)}`)
-    this.logger.info(`method: ${method}, url: ${url}, user: ${user.role}`)
+    this.logger.info(
+      `method: ${method}, url: ${splittedUrl}, user: ${user.role}`,
+    )
     const hasPermission = await this.casbinService.enforce(
       user.role,
-      url.split('?')[0],
+      splittedUrl,
       method,
     )
     this.logger.info(`hasPermission ${hasPermission}`)
