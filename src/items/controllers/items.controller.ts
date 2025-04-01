@@ -133,6 +133,7 @@ export class ItemsController {
     description: 'Item data',
     type: UpdateItemDto,
   })
+  @ApiConsumes('multipart/form-data')
   async update(
     @UploadedFile() image: Express.Multer.File,
     @Body() updateItemDto: UpdateItemDto,

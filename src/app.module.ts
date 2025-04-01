@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { LoggerModule } from 'nestjs-pino'
 import { Request, Response } from 'express'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -8,10 +7,12 @@ import { AppDataSource } from './db/config/database.config'
 import { AuthModule } from './auth/auth.module'
 import { ItemsModule } from './items/items.module'
 import { ConfigModule } from '@nestjs/config'
+import { TerminusModule } from '@nestjs/terminus'
 
 @Module({
   imports: [
     AuthModule,
+    TerminusModule,
     TypeOrmModule.forRoot(AppDataSource.options),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({
@@ -40,6 +41,6 @@ import { ConfigModule } from '@nestjs/config'
     ItemsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
