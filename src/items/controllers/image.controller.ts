@@ -1,8 +1,17 @@
-import { Controller, Get, Param, StreamableFile } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  StreamableFile,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ImageService } from '../service/image.service'
 import { createReadStream } from 'fs'
 import { join, resolve } from 'path'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 @Controller('image')
 @ApiTags('image')
@@ -30,5 +39,11 @@ export class ImageController {
       type: image.format,
       disposition: `attachment; filename="${image.originalName}"`,
     })
+  }
+
+  @Post('')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return await this.imageService.createImage(file)
   }
 }

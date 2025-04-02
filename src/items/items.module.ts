@@ -15,6 +15,9 @@ import { Color } from './entities/color.entity'
 import { Category } from './entities/category.entity'
 import { ImageController } from './controllers/image.controller'
 import { AuthModule } from 'src/auth/auth.module'
+import { ConfigService } from '@nestjs/config'
+import { S3Client } from '@aws-sdk/client-s3'
+import { s3ClientFactory } from './config/s3.config'
 
 @Module({
   imports: [
@@ -31,6 +34,14 @@ import { AuthModule } from 'src/auth/auth.module'
     CategoryService,
     ColorRepository,
     ColorService,
+    ConfigService,
+    S3Client,
+    {
+      provide: 'S3_CLIENT',
+      inject: [ConfigService],
+      useFactory: s3ClientFactory,
+    },
   ],
+  exports: ['S3_CLIENT'],
 })
 export class ItemsModule {}
