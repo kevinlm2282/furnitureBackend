@@ -68,7 +68,7 @@ export class ItemsService {
     let image: Image = item.image
     let color: Color = item.color
     let category: Category = item.category
-    const lastImageId = image.id
+    const lastImageId = image.uuid
     if (file) {
       image = await this.imageService.createImage(file)
 

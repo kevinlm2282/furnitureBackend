@@ -1,12 +1,16 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { ImageRepository } from '../repositories/image.repository'
 import { randomUUID } from 'crypto'
-import * as fs from 'node:fs/promises'
 import { Image } from '../entities/image.entity'
-import { join, resolve } from 'node:path'
 import { PinoLogger } from 'nestjs-pino'
 import { ConfigService } from '@nestjs/config'
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 @Injectable()
 export class ImageService {
@@ -21,7 +25,7 @@ export class ImageService {
   async createImage(file: Express.Multer.File) {
     const uuid = randomUUID()
     const bucketName = this.configService.get<string>('AWS_BUCKET_NAME')
-    const fileName = `${uuid}-${file.originalname}`
+    const fileName = `${uuid}`
 
     const params = {
       Bucket: bucketName,
@@ -35,38 +39,31 @@ export class ImageService {
       uuid: uuid,
       originalName: file.originalname,
     })
-    this.logger.info(`image ${JSON.stringify(image)}`)
-    this.logger.info(`originalName ${file.originalname}`)
     return await this.imageRepository.createImage(image)
   }
 
-  async getImageByUuid(uuid: string) {
-    const image = await this.imageRepository.getImageByUuid(uuid)
-    if (!image) {
-      throw new NotFoundException('Image not found')
-    }
-    return image
+  async getSignedUrl(uuid: string): Promise<string> {
+    const bucketName = this.configService.get<string>('AWS_BUCKET_NAME')
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: uuid,
+    })
+
+    return getSignedUrl(this.s3Client, command, { expiresIn: 3600 })
   }
 
-  async getImageById(id: number) {
-    const image = await this.imageRepository.getImageById(id)
-    if (!image) {
-      throw new NotFoundException('Image not found')
-    }
-    return image
-  }
+  async deleteImage(uuid: string) {
+    const bucketName = this.configService.get<string>('AWS_BUCKET_NAME')
 
-  async deleteImage(id: number) {
-    const image = await this.getImageById(id)
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: uuid,
+    }
+
     try {
-      const path = join(
-        process.env.NFS_PATH || resolve(__dirname, '../../../uploads'),
-        `/images`,
-      )
-      await fs.unlink(`${path}/${image.uuid}`)
-    } catch {
-      this.logger.info(`image doesnt exists`)
+      await this.s3Client.send(new DeleteObjectCommand(deleteParams))
+    } catch (error) {
+      throw new NotFoundException(`${error}`)
     }
-    return await this.imageRepository.deleteImage(id)
   }
 }
