@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Item } from '../entities/item.entity'
-import { Brackets, Repository } from 'typeorm'
-import { QueryParamsDto } from 'src/core/dto/query_params.dto'
 import { PinoLogger } from 'nestjs-pino'
+import { QueryParamsDto } from 'src/core/dto/query_params.dto'
+import { Brackets, Repository } from 'typeorm'
+import { Item } from '../entities/item.entity'
+import { ItemSelectDto } from '../types/item.types'
 
 @Injectable()
 export class ItemRepository {
@@ -21,7 +22,9 @@ export class ItemRepository {
     return await this.itemRepository.findOne({ where: { id } })
   }
 
-  async getItems(queryParams: QueryParamsDto): Promise<[any[], number]> {
+  async getItems(
+    queryParams: QueryParamsDto,
+  ): Promise<[ItemSelectDto[], number]> {
     const { filter, page, size, order, sort } = queryParams
     const qb = this.itemRepository.createQueryBuilder('item')
 

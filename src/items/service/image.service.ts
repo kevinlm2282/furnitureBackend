@@ -1,9 +1,3 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { ImageRepository } from '../repositories/image.repository'
-import { randomUUID } from 'crypto'
-import { Image } from '../entities/image.entity'
-import { PinoLogger } from 'nestjs-pino'
-import { ConfigService } from '@nestjs/config'
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -11,18 +5,35 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { randomUUID } from 'crypto'
+import { fileTypeFromBuffer } from 'file-type'
+import { PinoLogger } from 'nestjs-pino'
+import { Image } from '../entities/image.entity'
+import { ImageRepository } from '../repositories/image.repository'
 
 @Injectable()
 export class ImageService {
   constructor(
     private imageRepository: ImageRepository,
-    private logger: PinoLogger,
     private configService: ConfigService,
+    private logger: PinoLogger,
     @Inject('S3_CLIENT')
     private s3Client: S3Client,
   ) {}
 
   async createImage(file: Express.Multer.File) {
+    const fileType = await fileTypeFromBuffer(file.buffer)
+    if (fileType?.ext !== 'jpg' && fileType?.ext !== 'png') {
+      this.logger.error('Invalid file type')
+      throw new BadRequestException('Invalid file type')
+    }
     const uuid = randomUUID()
     const bucketName = this.configService.get<string>('AWS_BUCKET_NAME')
     const fileName = `${uuid}`

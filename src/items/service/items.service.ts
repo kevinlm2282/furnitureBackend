@@ -1,17 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { PinoLogger } from 'nestjs-pino'
 import { QueryParamsDto } from 'src/core/dto/query_params.dto'
-import { ItemRepository } from '../repositories/items.repository'
 import { mapPage, Page } from 'src/core/utils/utils'
 import { CreateItemDto } from '../dto/create-item.dto'
-import { Item } from '../entities/item.entity'
-import { ImageService } from './image.service'
-import { CategoryService } from './category.service'
-import { ColorService } from './color.service'
 import { UpdateItemDto } from '../dto/update-item.dto'
-import { Image } from '../entities/image.entity'
 import { Category } from '../entities/category.entity'
 import { Color } from '../entities/color.entity'
-import { PinoLogger } from 'nestjs-pino'
+import { Image } from '../entities/image.entity'
+import { Item } from '../entities/item.entity'
+import { ItemRepository } from '../repositories/items.repository'
+import { ItemDto, ItemSelectDto } from '../types/item.types'
+import { CategoryService } from './category.service'
+import { ColorService } from './color.service'
+import { ImageService } from './image.service'
 
 @Injectable()
 export class ItemsService {
@@ -47,7 +48,21 @@ export class ItemsService {
 
   async findAll(queryParams: QueryParamsDto): Promise<Page<any>> {
     const [items, count] = await this.itemRepository.getItems(queryParams)
-    return mapPage([items, count])
+    const mappedItems: ItemDto[] = await Promise.all(
+      items.map(async (item: ItemSelectDto) => {
+        return {
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          fabricationCost: item.fabricationcost,
+          sellPrice: item.sellprice,
+          color: item.color,
+          category: item.category,
+          imageUrl: await this.imageService.getSignedUrl(item.imageuuid),
+        }
+      }),
+    )
+    return mapPage([mappedItems, count])
   }
 
   async getItemById(id: number) {
@@ -55,7 +70,10 @@ export class ItemsService {
     if (!item) {
       throw new NotFoundException('Resource not found')
     }
-    return item
+    return {
+      ...item,
+      imageUrl: await this.imageService.getSignedUrl(item.image.uuid),
+    }
   }
 
   async updateItem(
