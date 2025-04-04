@@ -1,27 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  ParseFilePipeBuilder,
+  Post,
+  Put,
   Query,
   Req,
-  UseInterceptors,
   UploadedFile,
-  Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 
-import { ItemsService } from '../service/items.service'
-import { QueryParamsDto } from 'src/core/dto/query_params.dto'
-import { CreateItemDto } from '../dto/create-item.dto'
-import { Request } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { PinoLogger } from 'nestjs-pino'
-import { UpdateItemDto } from '../dto/update-item.dto'
-import { AuthGuard } from 'src/auth/guards/auth.guard'
-import { CasbinGuard } from 'src/auth/guards/casbin.guard'
 import {
   ApiBody,
   ApiConsumes,
@@ -30,15 +23,19 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { Request } from 'express'
+import { AuthGuard } from 'src/auth/guards/auth.guard'
+import { CasbinGuard } from 'src/auth/guards/casbin.guard'
+import { QueryParamsDto } from 'src/core/dto/query_params.dto'
+import { CreateItemDto } from '../dto/create-item.dto'
+import { UpdateItemDto } from '../dto/update-item.dto'
+import { ItemsService } from '../service/items.service'
 
 @Controller('items')
 @UseGuards(AuthGuard, CasbinGuard)
 @ApiTags('items')
 export class ItemsController {
-  constructor(
-    private readonly itemsService: ItemsService,
-    private logger: PinoLogger,
-  ) {}
+  constructor(private readonly itemsService: ItemsService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
@@ -64,7 +61,15 @@ export class ItemsController {
   async create(
     @Body() body: CreateItemDto,
     @Req() req: Request,
-    @UploadedFile() image: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({ maxSize: 5 * 1024 * 1024 })
+        .addFileTypeValidator({
+          fileType: 'image/jpeg|image/png',
+        })
+        .build(),
+    )
+    image: Express.Multer.File,
   ) {
     const user = req['user'] as { username: string; id: number; role: string }
     const item: CreateItemDto = { ...body }
@@ -135,7 +140,15 @@ export class ItemsController {
   })
   @ApiConsumes('multipart/form-data')
   async update(
-    @UploadedFile() image: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({ maxSize: 5 * 1024 * 1024 })
+        .addFileTypeValidator({
+          fileType: 'image/jpeg|png',
+        })
+        .build(),
+    )
+    image: Express.Multer.File,
     @Body() updateItemDto: UpdateItemDto,
     @Param('id') id: number,
     @Req() req: Request,
