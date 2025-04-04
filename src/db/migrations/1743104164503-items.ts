@@ -76,29 +76,9 @@ export class Items1743104164503 implements MigrationInterface {
 
     const images = [
       {
-        original_name: 'imagen1.jpg',
-        format: 'jpg',
-        uuid: 'uuid-1234',
-      },
-      {
-        original_name: 'imagen2.png',
+        original_name: 'placeholder.png',
         format: 'png',
-        uuid: 'uuid-5678',
-      },
-      {
-        original_name: 'imagen3.gif',
-        format: 'gif',
-        uuid: 'uuid-9101',
-      },
-      {
-        original_name: 'imagen4.svg',
-        format: 'svg',
-        uuid: 'uuid-1121',
-      },
-      {
-        original_name: 'imagen5.webp',
-        format: 'webp',
-        uuid: 'uuid-3141',
+        uuid: 'da550afe-1e96-4ecb-8f86-645659e6d9f3',
       },
     ]
 
@@ -133,7 +113,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 300.0,
         id_color: 2,
         id_category: 2,
-        id_image: 2,
+        id_image: 1,
       },
       {
         name: 'Silla de Oficina',
@@ -142,7 +122,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 90.0,
         id_color: 3,
         id_category: 3,
-        id_image: 3,
+        id_image: 1,
       },
       {
         name: 'Cama King Size',
@@ -151,7 +131,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 750.0,
         id_color: 4,
         id_category: 4,
-        id_image: 4,
+        id_image: 1,
       },
       {
         name: 'Estantería Moderna',
@@ -160,7 +140,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 200.0,
         id_color: 5,
         id_category: 5,
-        id_image: 5,
+        id_image: 1,
       },
       {
         name: 'Sofá Seccional',
@@ -178,7 +158,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 100.0,
         id_color: 2,
         id_category: 2,
-        id_image: 2,
+        id_image: 1,
       },
       {
         name: 'Silla de Madera',
@@ -187,7 +167,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 40.0,
         id_color: 3,
         id_category: 3,
-        id_image: 3,
+        id_image: 1,
       },
       {
         name: 'Cama Individual',
@@ -196,7 +176,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 250.0,
         id_color: 4,
         id_category: 4,
-        id_image: 4,
+        id_image: 1,
       },
       {
         name: 'Armario Grande',
@@ -205,7 +185,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 600.0,
         id_color: 5,
         id_category: 5,
-        id_image: 5,
+        id_image: 1,
       },
       {
         name: 'Escritorio Ejecutivo',
@@ -223,7 +203,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 70.0,
         id_color: 2,
         id_category: 3,
-        id_image: 2,
+        id_image: 1,
       },
       {
         name: 'Sofá 3 Plazas',
@@ -232,7 +212,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 350.0,
         id_color: 3,
         id_category: 1,
-        id_image: 3,
+        id_image: 1,
       },
       {
         name: 'Cama Doble',
@@ -241,7 +221,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 500.0,
         id_color: 4,
         id_category: 4,
-        id_image: 4,
+        id_image: 1,
       },
       {
         name: 'Set de Mesitas de Noche',
@@ -250,7 +230,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 120.0,
         id_color: 5,
         id_category: 5,
-        id_image: 5,
+        id_image: 1,
       },
       {
         name: 'Mueble para TV',
@@ -268,7 +248,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 120.0,
         id_color: 2,
         id_category: 3,
-        id_image: 2,
+        id_image: 1,
       },
       {
         name: 'Librero de Madera',
@@ -277,7 +257,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 300.0,
         id_color: 3,
         id_category: 5,
-        id_image: 3,
+        id_image: 1,
       },
       {
         name: 'Cajonera de Roble',
@@ -286,7 +266,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 200.0,
         id_color: 4,
         id_category: 5,
-        id_image: 4,
+        id_image: 1,
       },
       {
         name: 'Mesa Auxiliar',
@@ -295,7 +275,7 @@ export class Items1743104164503 implements MigrationInterface {
         fabrication_cost: 50.0,
         id_color: 5,
         id_category: 2,
-        id_image: 5,
+        id_image: 1,
       },
     ]
 
